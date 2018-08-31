@@ -150,12 +150,11 @@
 		if (data != nil)
 			[operation connection:nil didReceiveData:data];
 
-		[operation connectionDidFinishLoading:nil];
-
 		dispatch_semaphore_signal(semaphore);
 	}] resume];
 
 	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+	[operation connectionDidFinishLoading:nil];
 }
 
 - (void) dealloc
