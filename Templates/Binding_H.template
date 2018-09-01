@@ -63,10 +63,10 @@
 @property (nonatomic, retain) NSMutableData *responseData;
 
 - (id)initWithBinding:(%«className» *)aBinding delegate:(id<%«className»ResponseDelegate>)aDelegate;
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)urlResponse;
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
+- (void)didFailWithError:(NSError *)error;
+- (void)didReceiveResponse:(NSURLResponse *)urlResponse;
+- (void)didReceiveData:(NSData *)data;
+- (void)connectionDidFinishLoading;
 
 @end
 

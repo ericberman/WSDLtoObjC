@@ -110,7 +110,7 @@
                                             code:0
                                         userInfo:nil];
         
-        [operation connection:nil didFailWithError:err];
+        [operation didFailWithError:err];
         return;
     }
 
@@ -144,17 +144,17 @@
 	dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
 	[[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
 		if (error != nil)
-			[operation connection:nil didFailWithError:error];
+			[operation didFailWithError:error];
 		if (response != nil)
-			[operation connection:nil didReceiveResponse:response];
+			[operation didReceiveResponse:response];
 		if (data != nil)
-			[operation connection:nil didReceiveData:data];
+			[operation didReceiveData:data];
 
 		dispatch_semaphore_signal(semaphore);
 	}] resume];
 
 	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-	[operation connectionDidFinishLoading:nil];
+	[operation connectionDidFinishLoading];
 }
 
 - (void) dealloc
@@ -189,7 +189,7 @@
 	return self;
 }
 
-- (void) connectionDidFinishLoading:(NSURLConnection *)connection {
+- (void) connectionDidFinishLoading {
 // subclassed
 }
 
@@ -204,7 +204,7 @@
 	}
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)urlResponse
+- (void)didReceiveResponse:(NSURLResponse *)urlResponse
 {
 	NSHTTPURLResponse *httpResponse;
 
@@ -225,7 +225,6 @@
 
 		if ((self.binding.ignoreEmptyResponse == NO) || (contentLength != 0)) {
 			NSError *error = nil;
-			[connection cancel];
 			if ([httpResponse statusCode] >= 400) {
 				NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSHTTPURLResponse localizedStringForStatusCode:[httpResponse statusCode]],NSLocalizedDescriptionKey,
 																			  httpResponse.URL, NSURLErrorKey,nil];
@@ -237,14 +236,14 @@
 				error = [NSError errorWithDomain:@"%«className»ResponseHTTP" code:1 userInfo:userInfo];
 			}
 				
-			[self connection:connection didFailWithError:error];
+			[self didFailWithError:error];
 		} else {
             [delegate operation:self completedWithResponse:response];
 		}
 	}
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)didReceiveData:(NSData *)data
 {
 	if (responseData == nil) {
 		responseData = [data mutableCopy];
@@ -253,7 +252,7 @@
 	}
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+- (void)didFailWithError:(NSError *)error
 {
 	if (binding.logXMLInOut) {
 		NSLog(@"ResponseError:\n%@", error);
@@ -425,7 +424,7 @@
 	[binding sendHTTPCallUsingBody:operationXMLString soapAction:@"%«operation.soapAction»" forOperation:self];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+- (void)connectionDidFinishLoading
 {
 	if (responseData != nil && delegate != nil)
 	{
