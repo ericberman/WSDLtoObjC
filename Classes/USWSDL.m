@@ -43,7 +43,6 @@
 	return self;
 }
 
-
 - (USSchema *)schemaForNamespace:(NSString *)aNamespace
 {
 	for(USSchema *schema in self.schemas) {

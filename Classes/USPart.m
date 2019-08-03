@@ -43,7 +43,6 @@
 	return self;
 }
 
-
 - (NSString *)uname
 {
 	return [self.name stringWithCapitalizedFirstCharacter];

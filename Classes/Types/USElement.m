@@ -48,7 +48,6 @@
 	return self;
 }
 
-
 - (void)setName:(NSString *)aName
 {
 	USObjCKeywords *keywords = [USObjCKeywords sharedInstance];
@@ -58,7 +57,6 @@
 		aName = [NSString stringWithFormat:@"%@_", aName];
 	}
 	
-    // EricBe: autorelease -> release for ARC
 	name = [aName copy];
 }
 

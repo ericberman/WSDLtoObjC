@@ -55,7 +55,6 @@
 	return self;
 }
 
-
 - (USOperationFault *)faultForName:(NSString *)aName
 {
 	for(USOperationFault *fault in self.faults) {

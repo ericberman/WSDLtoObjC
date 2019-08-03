@@ -41,7 +41,6 @@
 	return self;
 }
 
-
 - (USOperation *)operationForName:(NSString *)aName
 {
 	for(USOperation *operation in self.operations) {

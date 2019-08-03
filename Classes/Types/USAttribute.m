@@ -43,7 +43,6 @@
 	return self;
 }
 
-
 - (NSDictionary *)templateKeyDictionary
 {
 	NSMutableDictionary *returning = [NSMutableDictionary dictionary];
@@ -69,7 +68,6 @@
 		aName = [NSString stringWithFormat:@"%@_", aName];
 	}
 	
-    // EricBe: autorelease -> Release to switch to ARC
 	name = [aName copy];
 }
 

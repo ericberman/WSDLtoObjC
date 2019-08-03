@@ -44,7 +44,6 @@
 	return self;
 }
 
-
 - (USPart *)partForName:(NSString *)aName
 {
 	for(USPart *part in self.parts) {

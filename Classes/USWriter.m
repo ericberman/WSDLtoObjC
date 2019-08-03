@@ -63,7 +63,6 @@
 	return self;
 }
 
-
 - (BOOL)write;
 {
 	if(!wsdl) {
@@ -161,7 +160,6 @@
 	if(errors == nil) {
 		[mString appendString:schemaMString];
 	}
-	
 	
 	for(USType *type in schema.types) {
 		[self appendType:type toHString:hString mString:mString];

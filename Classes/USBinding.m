@@ -46,7 +46,6 @@
 	return self;
 }
 
-
 - (NSString *)className
 {
 	NSString *result = [[self.name componentsSeparatedByCharactersInSet:kIllegalClassCharactersSet] componentsJoinedByString:@""];

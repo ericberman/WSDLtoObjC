@@ -44,7 +44,6 @@
 	return self;
 }
 
-
 - (USPort *)portForName:(NSString *)aName
 {
 	for(USPort *port in self.ports) {
