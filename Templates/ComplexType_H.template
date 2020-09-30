@@ -8,12 +8,12 @@
 
 %IFDEF superClass
 %IFDEF IsAttributedString
-@interface %«className» : NSObject <NSCoding> {
+@interface %«className» : NSObject <NSCoding, NSSecureCoding> {
 %ELSE
 @interface %«className» : %«superClass.classNameWithoutPtr» {
 %ENDIF
 %ELSE
-@interface %«className» : NSObject <NSCoding> {
+@interface %«className» : NSObject <NSCoding, NSSecureCoding> {
 SOAPSigner *soapSigner;
 %ENDIF
 

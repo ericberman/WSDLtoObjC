@@ -518,4 +518,8 @@ _content = nil;
 	[pool drain];
 }
 
++ (BOOL) supportsSecureCoding {
+	return YES;
+}
+
 @end
