@@ -35,7 +35,7 @@
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) NSMutableArray *ports;
 @property (nonatomic, strong) USSchema *schema;
-@property (nonatomic, readonly) NSString *className;
+@property (weak, nonatomic, readonly) NSString *className;
 
 - (USPort *)portForName:(NSString *)aName;
 

@@ -51,8 +51,8 @@
 - (IBAction)parseWSDL:(id)sender;
 #endif
 
-@property (nonatomic, readonly) NSURL *wsdlURL;
-@property (nonatomic, readonly) NSURL *outURL;
+@property (weak, nonatomic, readonly) NSURL *wsdlURL;
+@property (weak, nonatomic, readonly) NSURL *outURL;
 #ifdef APPKIT_EXTERN
 @property (nonatomic, copy) NSString *statusString;
 @property (nonatomic) BOOL parsing;

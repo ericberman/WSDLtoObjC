@@ -37,7 +37,7 @@
 @property (nonatomic, strong) USPortType *portType;
 @property (nonatomic, copy) NSString *soapVersion;
 @property (nonatomic, strong) USSchema *schema;
-@property (nonatomic, readonly) NSString *className;
+@property (weak, nonatomic, readonly) NSString *className;
 
 - (NSString *)templateFileHPath;
 - (NSString *)templateFileMPath;

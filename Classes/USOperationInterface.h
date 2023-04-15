@@ -37,7 +37,7 @@
 @property (nonatomic, strong) NSMutableArray *headers;
 @property (nonatomic, strong) USMessage *body;
 @property (nonatomic, strong) USOperation *operation;
-@property (nonatomic, readonly) NSString *className;
+@property (weak, nonatomic, readonly) NSString *className;
 
 + (USOperationInterface *)operationInterfaceForOperation:(USOperation *)operation;
 

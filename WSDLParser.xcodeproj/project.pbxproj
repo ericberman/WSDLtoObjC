@@ -139,7 +139,6 @@
 		624065410E70A8D0006BEB94 /* Binding_M.template */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; includeInIndex = 0; path = Binding_M.template; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		62ADD3970E6890140052979D /* USParser+Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "USParser+Types.h"; sourceTree = "<group>"; };
 		62ADD3980E6890140052979D /* USParser+Types.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "USParser+Types.m"; sourceTree = "<group>"; };
-		62ADD8740E68C16B0052979D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		62BF41B20E72004900FA8190 /* USAdditions_H.template */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; includeInIndex = 0; path = USAdditions_H.template; sourceTree = "<group>"; usesTabs = 1; };
 		62BF41B30E72004900FA8190 /* USAdditions_M.template */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; includeInIndex = 0; path = USAdditions_M.template; sourceTree = "<group>"; usesTabs = 1; };
 		62BF42030E72073F00FA8190 /* NSDate+ISO8601Parsing_H.template */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; includeInIndex = 0; path = "NSDate+ISO8601Parsing_H.template"; sourceTree = "<group>"; usesTabs = 1; };
@@ -243,7 +242,6 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				62ADD8740E68C16B0052979D /* Cocoa.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
@@ -644,13 +642,14 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "WSDL2ObjC-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
 					"-framework",
 					AppKit,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.lightspeed-tek.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = WSDLParser;
 				SDKROOT = macosx;
 			};
@@ -675,13 +674,14 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "WSDL2ObjC-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
 					"-framework",
 					AppKit,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.lightspeed-tek.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = WSDLParser;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "-Wall";
@@ -693,14 +693,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
 				INSTALL_PATH = /usr/local/bin;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -719,17 +721,19 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = YES;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
 				INSTALL_PATH = /usr/local/bin;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,

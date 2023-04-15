@@ -42,7 +42,7 @@
 @property (nonatomic, strong) USOperationInterface *output;
 @property (nonatomic, strong) NSMutableArray *faults;
 @property (nonatomic, strong) USPortType *portType;
-@property (nonatomic, readonly) NSString* className;
+@property (weak, nonatomic, readonly) NSString* className;
 
 - (USOperationFault *)faultForName:(NSString *)aName;
 
