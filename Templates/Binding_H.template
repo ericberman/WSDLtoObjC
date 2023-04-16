@@ -31,10 +31,10 @@
 @property (nonatomic) BOOL logXMLInOut;
 @property (nonatomic) BOOL ignoreEmptyResponse;
 @property (nonatomic) NSTimeInterval timeout;
-@property (nonatomic, retain) NSMutableArray *cookies;
-@property (nonatomic, retain) NSMutableDictionary *customHeaders;
-@property (nonatomic, retain) id<SSLCredentialsManaging> sslManager;
-@property (nonatomic, retain) SOAPSigner *soapSigner;
+@property (nonatomic, strong) NSMutableArray *cookies;
+@property (nonatomic, strong) NSMutableDictionary *customHeaders;
+@property (nonatomic, strong) id<SSLCredentialsManaging> sslManager;
+@property (nonatomic, strong) SOAPSigner *soapSigner;
 
 + (NSTimeInterval) defaultTimeout;
 
@@ -52,15 +52,15 @@
 
 @interface %«className»Operation : NSOperation {
 	%«className» *binding;
-	%«className»Response *response;
-	id<%«className»ResponseDelegate> delegate;
+	%«className»Response * response;
+	id<%«className»ResponseDelegate> __weak delegate;
 	NSMutableData *responseData;
 }
 
-@property (nonatomic, retain) %«className» *binding;
-@property (nonatomic, readonly) %«className»Response *response;
-@property (nonatomic, assign) id<%«className»ResponseDelegate> delegate;
-@property (nonatomic, retain) NSMutableData *responseData;
+@property (nonatomic, strong) %«className» *binding;
+@property (nonatomic, strong) %«className»Response *response;
+@property (nonatomic, weak) id<%«className»ResponseDelegate> delegate;
+@property (nonatomic, strong) NSMutableData *responseData;
 
 - (id)initWithBinding:(%«className» *)aBinding delegate:(id<%«className»ResponseDelegate>)aDelegate;
 - (void)didFailWithError:(NSError *)error;
@@ -119,8 +119,8 @@
 	NSError *error;
 }
 
-@property (nonatomic, retain) NSArray *headers;
-@property (nonatomic, retain) NSArray *bodyParts;
-@property (nonatomic, retain) NSError *error;
+@property (nonatomic, strong) NSArray *headers;
+@property (nonatomic, strong) NSArray *bodyParts;
+@property (nonatomic, strong) NSError *error;
 
 @end

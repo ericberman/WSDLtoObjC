@@ -114,12 +114,12 @@
 		}
 	}
 	
-	return @"retain";
+	return @"strong";
 }
 
 - (NSString *)enumCount
 {
-	return [[NSNumber numberWithUnsignedInt:[self.enumerationValues count]] stringValue];
+	return [[NSNumber numberWithUnsignedInt:(unsigned int) [self.enumerationValues count]] stringValue];
 }
 
 - (NSString *)templateFileHPath

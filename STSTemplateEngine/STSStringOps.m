@@ -388,7 +388,7 @@
 	} // end if
 	
 	// remember the length of the receiver
-	len = [self length];
+	len = (unsigned int) [self length];
 	// initialise the search range
 	range.location = 0; range.length = len;
 
@@ -790,7 +790,7 @@
 	} // end if
 	
 	// remember the length of the receiver
-	len = [self length];
+	len = (unsigned int) [self length];
 	// initialise the search range
 	range.location = 0; range.length = len;
 	
@@ -891,7 +891,7 @@
 	} // end if
 	
 	// remember the length of the receiver
-	len = [self length];
+	len = (unsigned int) [self length];
 	// initialise previous marker flag
 	previousMarkerWasCR = 0;
 	// initialise the search range

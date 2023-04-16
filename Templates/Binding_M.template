@@ -80,26 +80,26 @@
 %FOREACH operation in operations
 - (%«className»Response *)%«operation.invokeString»
 {
-	return [self performSynchronousOperation:[[(%«className»_%«operation.className»*)[%«className»_%«operation.className» alloc] initWithBinding:self delegate:self
+	return [self performSynchronousOperation:[(%«className»_%«operation.className»*)[%«className»_%«operation.className» alloc] initWithBinding:self delegate:self
 %FOREACH part in operation.input.body.parts
 																							%«part.name»:a%«part.uname»
 %ENDFOR
 %FOREACH header in operation.input.headers
 																							%«header.name»:a%«header.uname»
 %ENDFOR
-																							] autorelease]];
+																							]];
 }
 
 - (void)%«operation.asyncInvokeString» delegate:(id<%«className»ResponseDelegate>)responseDelegate
 {
-	[self performAsynchronousOperation: [[(%«className»_%«operation.className»*)[%«className»_%«operation.className» alloc] initWithBinding:self delegate:responseDelegate
+	[self performAsynchronousOperation: [(%«className»_%«operation.className»*)[%«className»_%«operation.className» alloc] initWithBinding:self delegate:responseDelegate
 %FOREACH part in operation.input.body.parts
 																							 %«part.name»:a%«part.uname»
 %ENDFOR
 %FOREACH header in operation.input.headers
 																							 %«header.name»:a%«header.uname»
 %ENDFOR
-																							 ] autorelease]];
+																							 ]];
 }
 %ENDFOR
 
@@ -156,19 +156,6 @@
 	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 	[operation connectionDidFinishLoading];
 }
-
-- (void) dealloc
-{
-	[soapSigner release];
-	// ERICBE: Assign sslManager property to nil to release it - avoids a compiler warning.
-	// [sslManager release];
-	self.sslManager = nil;
-	[address release];
-	[cookies release];
-	[customHeaders release];
-	[super dealloc];
-}
-
 @end
 
 @implementation %«className»Operation
@@ -260,17 +247,6 @@
 	response.error = error;
 	[delegate operation:self completedWithResponse:response];
 }
-
-- (void)dealloc
-{
-	[binding release];
-	[response release];
-	delegate = nil;
-	[responseData release];
-
-	[super dealloc];
-}
-
 @end
 
 %FOREACH operation in operations
@@ -303,37 +279,19 @@
 	return self;
 }
 
-- (void)dealloc
-{
-%FOREACH part in operation.input.body.parts
-%IFEQ part.element.type.assignOrRetain retain
-	if(%«part.name» != nil) [%«part.name» release];
-%ENDIF
-%ENDFOR
-%FOREACH header in operation.input.headers
-%IFEQ header.type.assignOrRetain retain
-	if(%«header.name» != nil) [%«header.name» release];
-%ENDIF
-%ENDFOR
-	
-	[super dealloc];
-}
-
 - (void)main
 {
-	[response autorelease];
 	response = [%«className»Response new];
 	
 	%«className»_envelope *envelope = [%«className»_envelope sharedInstance];
 	
-	NSMutableDictionary *headerElements = nil;
+	NSMutableDictionary * headerElements = [NSMutableDictionary dictionary];
 %IFDEF operation.input.headers
-	headerElements = [NSMutableDictionary dictionary];
 %FOREACH header in operation.input.headers
-%IFEQ header.type.assignOrRetain retain
+%IFEQ header.type.assignOrRetain strong
 	if(%«header.name» != nil) [headerElements setObject:%«header.name» forKey:@"%«header.wsdlName»"];
 %ELSIFEQ header.type.typeName boolean
-	if(%«header.name» != nil) [headerElements setObject:[[[USBoolean alloc] initWithBool:*%«header.name»] autorelease] forKey:@"%«header.wsdlName»"];
+	if(%«header.name» != nil) [headerElements setObject:[[USBoolean alloc] initWithBool:*%«header.name»] forKey:@"%«header.wsdlName»"];
 %ELSIFEQ header.type.typeName byte
 	if(%«header.name» != nil) [headerElements setObject:[NSNumber numberWithChar:*%«header.name»] forKey:@"%«header.wsdlName»"];
 %ELSIFEQ header.type.typeName int
@@ -367,7 +325,6 @@
 %ENDIF
 %ENDFOR
 %ENDIF
-	
 	NSMutableDictionary *bodyElements = nil;
 	NSMutableArray *bodyKeys = nil;
 %IFDEF operation.input.body.parts
@@ -375,10 +332,10 @@
 	bodyKeys = [NSMutableArray array];
 	id obj = nil;
 %FOREACH part in operation.input.body.parts
-%IFEQ part.element.type.assignOrRetain retain
+%IFEQ part.element.type.assignOrRetain strong
 	if(%«part.name» != nil) obj = %«part.name»;
 %ELSIFEQ part.element.type.typeName boolean
-	if(%«part.name» != nil) obj = [[[USBoolean alloc] initWithBool:*%«part.name»] autorelease];
+	if(%«part.name» != nil) obj = [[USBoolean alloc] initWithBool:*%«part.name»];
 %ELSIFEQ part.element.type.typeName byte
 	if(%«part.name» != nil) obj = [NSNumber numberWithChar:*%«part.name»];
 %ELSIFEQ part.element.type.typeName int
@@ -432,7 +389,7 @@
 		xmlNodePtr cur;
 		
 		if (binding.logXMLInOut) {
-			NSLog(@"ResponseBody:\n%@", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease]);
+			NSLog(@"ResponseBody:\n%@", [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
 		}
 		
 #if !TARGET_OS_IPHONE && (!defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6)
@@ -487,7 +444,7 @@
 									if (bodyObject != nil) [responseBodyParts addObject:bodyObject];
 								}
 %ENDFOR
-								if ((bodyNode->ns != nil && xmlStrEqual(bodyNode->ns->prefix, cur->ns->prefix)) && 
+								if ((bodyNode->ns != nil && xmlStrEqual(bodyNode->ns->prefix, cur->ns->prefix)) &&
 									xmlStrEqual(bodyNode->name, (const xmlChar *) "Fault")) {
 %IF operation.hasFaults
                                     NSDictionary *exceptions = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -590,7 +547,7 @@ static %«className»_envelope *%«className»SharedEnvelopeInstance = nil;
 	NSString *serializedForm = [NSString stringWithCString:(const char*)buf encoding:NSUTF8StringEncoding];
 	xmlFree(buf);
 	
-	xmlFreeDoc(doc);	
+	xmlFreeDoc(doc);
 	return serializedForm;
 }
 
@@ -612,12 +569,4 @@ static %«className»_envelope *%«className»SharedEnvelopeInstance = nil;
 	
 	return self;
 }
-
-- (void)dealloc {
-	self.headers = nil;
-	self.bodyParts = nil;
-	self.error = nil;	
-	[super dealloc];
-}
-
 @end

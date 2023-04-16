@@ -39,31 +39,6 @@ _content = nil;
 	return self;
 }
 
-- (void)dealloc
-{
-%IFNDEF superClass
-	[soapSigner release];
-%ENDIF
-
-%IFDEF sequenceElements
-%FOREACH element in sequenceElements
-%IFEQ element.type.assignOrRetain retain
-	if(%«element.name» != nil) [%«element.name» release];
-%ENDIF
-%ENDFOR
-%ENDIF
-
-%IFDEF attributes
-%FOREACH attribute in attributes
-%IFEQ attribute.type.assignOrRetain retain
-	if(%«attribute.name» != nil) [%«attribute.name» release];
-%ENDIF
-%ENDFOR
-%ENDIF
-	
-	[super dealloc];
-}
-
 - (NSString *)nsPrefix
 {
 	return @"%«schema.prefix»";
@@ -95,7 +70,7 @@ _content = nil;
 	// BUGBUG: ASP.NET compatibility: need to add xmlns attribute or else parameters don't make it.  Is there a good
 	// place to do this so that we don't have to redo this whenever we autogenerate new code?
 	xmlNsPtr xmlns = xmlSearchNs(doc, root, (const xmlChar*)"xmlns");
-	xmlSetNsProp(node, xmlns, (const xmlChar*)"xmlns", (const xmlChar*)"http://myflightbook.com/");	
+	xmlSetNsProp(node, xmlns, (const xmlChar*)"xmlns", (const xmlChar*)"http://myflightbook.com/");
 	
 %ENDIF
 	
@@ -119,7 +94,7 @@ _content = nil;
 %IFDEF attributes
 %FOREACH attribute in attributes
 	if(self.%«attribute.name» != 0) {
-%IFEQ attribute.type.assignOrRetain retain
+%IFEQ attribute.type.assignOrRetain strong
 		xmlSetProp(node, (const xmlChar*)"%«attribute.wsdlName»", [[self.%«attribute.name» description] xmlString]);
 %ELSIFEQ attribute.type.typeName boolean
 		xmlSetProp(node, (const xmlChar*)"%«attribute.wsdlName»", (*self.%«attribute.name» ? (const xmlChar*)"true" : (const xmlChar*)"false"));
@@ -158,8 +133,12 @@ _content = nil;
 	
 %IFDEF sequenceElements
 %FOREACH element in sequenceElements
+%IFEQ element.type.assignOrRetain assign
 	if(((void *)self.%«element.name») != 0) {
-%IFEQ element.type.assignOrRetain retain
+%ELSE
+	if(((__bridge void *)self.%«element.name») != 0) {
+%ENDIF
+%IFEQ element.type.assignOrRetain strong
 
 %IF element.useAnArray
 		for(%«element.type.classNameWithPtr» child in self.%«element.name») {
@@ -243,7 +222,7 @@ _content = nil;
 {
 	NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
 %FOREACH attribute in attributes
-%IFEQ attribute.type.assignOrRetain retain
+%IFEQ attribute.type.assignOrRetain strong
 	[attributes setObject:self.%«attribute.name» forKey:@"%«attribute.wsdlName»"];
 %ELSE
 	[attributes setObject:[NSNumber numberWithInt:(int)self.%«attribute.name»] forKey:@"%«attribute.wsdlName»"];
@@ -263,7 +242,7 @@ _content = nil;
 
 + (%«classNameWithPtr»)deserializeNode:(xmlNodePtr)cur
 {
-	%«className» *newObject = [[%«className» new] autorelease];
+	%«className» *newObject = [%«className» new];
 	
 %IFDEF IsAttributedString
 	// Set the string content
@@ -299,7 +278,7 @@ _content = nil;
 		attrString = [NSString stringWithCString:(char*)attrValue encoding:NSUTF8StringEncoding];
 
 %IFEQ attribute.type.typeName boolean
-		self.%«attribute.name» = [[[USBoolean alloc] initWithBool:([attrString boolValue] ? YES : NO)] autorelease];
+		self.%«attribute.name» = [[USBoolean alloc] initWithBool:([attrString boolValue] ? YES : NO)];
 %ELSIFEQ attribute.type.typeName byte
 		self.%«attribute.name» = [NSNumber numberWithChar:[attrString intValue]];
 %ELSIFEQ attribute.type.typeName int
@@ -395,7 +374,7 @@ _content = nil;
 			}
 %FOREACH element in sequenceElements
 			if(xmlStrEqual(cur->name, (const xmlChar *) "%«element.wsdlName»")) {
-%IFEQ element.type.assignOrRetain retain
+%IFEQ element.type.assignOrRetain strong
 				
 				Class elementClass = nil;
 				xmlChar *instanceType = xmlGetNsProp(cur, (const xmlChar *) "type", (const xmlChar *) "http://www.w3.org/2001/XMLSchema-instance");
@@ -474,48 +453,44 @@ _content = nil;
 
 }
 
-/* NSCoder functions taken from: 
+/* NSCoder functions taken from:
  * http://davedelong.com/blog/2009/04/13/aspect-oriented-programming-objective-c
  */
 - (id) initWithCoder:(NSCoder *)decoder {
-	// ERICBE: XCode Analyze doesn't see below as a call to [super init] or [super initWithCoder];
-	// So we will just call [super init] THEN call initWithCoder.  A bit less efficient, but hey - this code never actually gets called!
 	self = [super init];
-	if ([super respondsToSelector:@selector(initWithCoder:)] && ![self isKindOfClass:[super class]])
-		[super performSelector:@selector(initWithCoder:) withObject:decoder];
 
 	if (self == nil) { return nil; }
  
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	unsigned int numIvars = 0;
-	Ivar * ivars = class_copyIvarList([self class], &numIvars);
-	for(int i = 0; i < numIvars; i++) {
-		Ivar thisIvar = ivars[i];
-		NSString * key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
-		id value = [decoder decodeObjectForKey:key];
-		if (value == nil) { value = [NSNumber numberWithFloat:0.0]; }
-		[self setValue:value forKey:key];
+	@autoreleasepool {
+		unsigned int numIvars = 0;
+		Ivar * ivars = class_copyIvarList([self class], &numIvars);
+		for(int i = 0; i < numIvars; i++) {
+			Ivar thisIvar = ivars[i];
+			NSString * key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
+			id value = [decoder decodeObjectForKey:key];
+			if (value == nil) { value = [NSNumber numberWithFloat:0.0]; }
+			[self setValue:value forKey:key];
+		}
+		if (numIvars > 0) { free(ivars); }
+		return self;
 	}
-	if (numIvars > 0) { free(ivars); }
-	[pool drain];
-	return self;
 }
 
 - (void) encodeWithCoder:(NSCoder *)encoder {
 	if ([super respondsToSelector:@selector(encodeWithCoder:)] && ![self isKindOfClass:[super class]]) {
 		[super performSelector:@selector(encodeWithCoder:) withObject:encoder];
 	}
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	unsigned int numIvars = 0;
-	Ivar * ivars = class_copyIvarList([self class], &numIvars);
-	for (int i = 0; i < numIvars; i++) {
-		Ivar thisIvar = ivars[i];
-		NSString * key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
-		id value = [self valueForKey:key];
-		[encoder encodeObject:value forKey:key];
+	@autoreleasepool {
+		unsigned int numIvars = 0;
+		Ivar * ivars = class_copyIvarList([self class], &numIvars);
+		for (int i = 0; i < numIvars; i++) {
+			Ivar thisIvar = ivars[i];
+			NSString * key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
+			id value = [self valueForKey:key];
+			[encoder encodeObject:value forKey:key];
+		}
+		if (numIvars > 0) { free(ivars); }
 	}
-	if (numIvars > 0) { free(ivars); }
-	[pool drain];
 }
 
 + (BOOL) supportsSecureCoding {

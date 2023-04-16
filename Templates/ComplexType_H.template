@@ -53,12 +53,12 @@ NSString *_content;
 - (void)deserializeElementsFromNode:(xmlNodePtr)cur;
 
 %IFNDEF superClass
-@property (retain) SOAPSigner *soapSigner;
+@property (strong) SOAPSigner *soapSigner;
 %ENDIF
 
 %IFDEF IsAttributedString
 /* content */
-@property (nonatomic, retain) NSString *_content;
+@property (nonatomic, strong) NSString *_content;
 %ENDIF
 
 /* elements */

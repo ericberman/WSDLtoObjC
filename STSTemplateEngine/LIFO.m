@@ -72,7 +72,7 @@
 
 - (unsigned)count;
 {
-	return [self->_stack count];
+	return (unsigned int) [self->_stack count];
 } // end method
 
 // ---------------------------------------------------------------------------
