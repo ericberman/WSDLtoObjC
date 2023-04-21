@@ -44,7 +44,6 @@
 - (NSString *)MIMEType;
 
 %FOREACH operation in operations
-- (%«className»Response *)%«operation.invokeString»;
 - (void)%«operation.asyncInvokeString» delegate:(id<%«className»ResponseDelegate>)responseDelegate;
 %ENDFOR
 

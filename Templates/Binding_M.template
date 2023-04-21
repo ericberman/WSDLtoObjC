@@ -54,19 +54,6 @@
 	}
 }
 
-- (%«className»Response *)performSynchronousOperation:(%«className»Operation *)operation
-{
-	synchronousOperationComplete = NO;
-	[operation start];
-	
-	// Now wait for response
-	NSRunLoop *theRL = [NSRunLoop currentRunLoop];
-	
-	while (!synchronousOperationComplete && [theRL runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
-
-	return operation.response;
-}
-
 - (void)performAsynchronousOperation:(%«className»Operation *)operation
 {
 	[operation start];
@@ -78,18 +65,6 @@
 }
 
 %FOREACH operation in operations
-- (%«className»Response *)%«operation.invokeString»
-{
-	return [self performSynchronousOperation:[(%«className»_%«operation.className»*)[%«className»_%«operation.className» alloc] initWithBinding:self delegate:self
-%FOREACH part in operation.input.body.parts
-																							%«part.name»:a%«part.uname»
-%ENDFOR
-%FOREACH header in operation.input.headers
-																							%«header.name»:a%«header.uname»
-%ENDFOR
-																							]];
-}
-
 - (void)%«operation.asyncInvokeString» delegate:(id<%«className»ResponseDelegate>)responseDelegate
 {
 	[self performAsynchronousOperation: [(%«className»_%«operation.className»*)[%«className»_%«operation.className» alloc] initWithBinding:self delegate:responseDelegate
@@ -125,7 +100,6 @@
 	[request setValue:@"wsdl2objc" forHTTPHeaderField:@"User-Agent"];
 	[request setValue:soapAction forHTTPHeaderField:@"SOAPAction"];
 	[request setValue:[[self MIMEType] stringByAppendingString:@"; charset=utf-8"] forHTTPHeaderField:@"Content-Type"];
-	// ERICBE: cast to unsigned long to prevent warnings about implicit cast of NSInteger
 	[request setValue:[NSString stringWithFormat:@"%lu", (unsigned long) [bodyData length]] forHTTPHeaderField:@"Content-Length"];
 	[request setValue:self.address.host forHTTPHeaderField:@"Host"];
 	for (NSString *eachHeaderField in [self.customHeaders allKeys]) {
